@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Portfolio</title>
+    <!-- 强制清除缓存 -->
+    <meta http-equiv='cache-control' content='no-cache, no-store, must-revalidate'>
+    <meta http-equiv='expires' content='0'>
+    <meta http-equiv='pragma' content='no-cache'>
+    <style>
+        /* 样式保持不变，与上一版相同 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 5%;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-logo {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        #home {
+            text-align: center;
+            padding-top: 3rem;
+        }
+
+        .company-name {
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #0f172a, #334155);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .main-intro {
+            font-size: 1.5rem;
+            color: #1e293b;
+            max-width: 700px;
+            margin: 0.5rem auto 0.25rem;
+            font-weight: 400;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+
+        .sub-intro {
+            font-size: 1.1rem;
+            color: #475569;
+            max-width: 700px;
+            margin: 0.25rem auto 0;
+            font-weight: 300;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        #works {
+            padding-top: 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 2.5rem;
+            color: #0f172a;
+            text-align: center;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .cover-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            pointer-events: none;
+            transition: background-color 0.1s;
+        }
+
+        .play-button::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 8px 0 8px 14px;
+            border-color: transparent transparent transparent #0f172a;
+            margin-left: 4px;
+        }
+
+        .video-card:hover .play-button {
+            background-color: #ffffff;
+        }
+
+        .card-info {
+            padding: 1rem 1rem 1.2rem;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1.4;
+            color: #1e293b;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #contact {
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 4rem 2rem;
+        }
+
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 2rem;
+        }
+
+        .contact-item {
+            font-size: 1.1rem;
+            color: #334155;
+            margin-bottom: 0.8rem;
+        }
+
+        .contact-item strong {
+            font-weight: 600;
+            color: #0f172a;
+            min-width: 70px;
+            display: inline-block;
+            text-align: right;
+            margin-right: 1rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            width: min(85vw, 1100px);
+            background: transparent;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: scale(0.96);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.3rem 0.8rem;
+            background: rgba(20, 20, 20, 0.95);
+            color: white;
+        }
+
+        .modal-title {
+            font-size: 0.95rem;
+            font-weight: 400;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 80%;
+            color: #ddd;
+        }
+
+        .close-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 14px;
+            font-size: 1.2rem;
+            line-height: 1;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.1s;
+        }
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .custom-video-player {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            display: block;
+            background: #000;
+        }
+
+        .loading, .no-video {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+            font-size: 1.1rem;
+            grid-column: 1/-1;
+        }
+
+        .admin-badge {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 18px;
+            border-radius: 40px;
+            color: white;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            text-decoration: none;
+            z-index: 200;
+            backdrop-filter: blur(5px);
+        }
+        .admin-badge:hover {
+            background: rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <img class="navbar-logo" id="navbarLogo" src="" alt="Logo">
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#works">作品</a>
+            <a href="#contact">联系我们</a>
+        </div>
+    </nav>
+
+    <section id="home" class="section">
+        <h1 class="company-name" id="companyName">加载中...</h1>
+        <p class="main-intro" id="mainIntro"></p>
+        <p class="sub-intro" id="subIntro"></p>
+    </section>
+
+    <section id="works" class="section">
+        <h2 class="section-title">作品展示</h2>
+        <div class="video-grid" id="videoGrid"></div>
+        <div id="loadingIndicator" class="loading">✨ 加载作品视频...</div>
+    </section>
+
+    <section id="contact">
+        <div class="contact-container">
+            <h2 class="contact-title">联系我们</h2>
+            <div id="contactInfo">
+                <div class="contact-item"><strong>姓名</strong> <span id="contactName">-</span></div>
+                <div class="contact-item"><strong>电话</strong> <span id="contactPhone">-</span></div>
+                <div class="contact-item"><strong>地址</strong> <span id="contactAddress">-</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 视频播放模态框 -->
+    <div class="modal-overlay" id="videoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="modalVideoTitle">视频标题</span>
+                <button class="close-btn" id="closeModalBtn">✕</button>
+            </div>
+            <div id="videoPlayerContainer"></div>
+        </div>
+    </div>
+
+    <a href="admin.html" class="admin-badge" target="_blank">⚙️ 管理后台</a>
+
+    <script>
+        (function() {
+            // 默认配置（包含备选视频URL）
+            const DEFAULT_CONFIG = {
+                companyName: 'Video Portfolio',
+                logoUrl: 'https://via.placeholder.com/150x40/1e293b/ffffff?text=LOGO',
+                mainIntro: 'A collection of my video projects',
+                subIntro: 'showcasing creativity and storytelling.',
+                videos: [
+                    { 
+                        cover_url: 'https://via.placeholder.com/320x180?text=封面1', 
+                        title: '创意混剪', 
+                        video_url: 'https://your-bucket.cos.ap-chengdu.myqcloud.com/video1_hevc.mp4',
+                        video_url_alt: 'https://your-bucket.cos.ap-chengdu.myqcloud.com/video1_h264.mp4'
+                    },
+                    { 
+                        cover_url: 'https://via.placeholder.com/320x180?text=封面2', 
+                        title: '产品故事', 
+                        video_url: 'https://your-bucket.cos.ap-chengdu.myqcloud.com/video2_hevc.mp4',
+                        video_url_alt: 'https://your-bucket.cos.ap-chengdu.myqcloud.com/video2_h264.mp4'
+                    },
+                    { 
+                        cover_url: 'https://via.placeholder.com/320x180?text=封面3', 
+                        title: '品牌宣传片', 
+                        video_url: 'https://your-bucket.cos.ap-chengdu.myqcloud.com/video3_hevc.mp4',
+                        video_url_alt: 'https://your-bucket.cos.ap-chengdu.myqcloud.com/video3_h264.mp4'
+                    }
+                ],
+                contact: {
+                    name: '张三',
+                    phone: '+86 123 4567 8901',
+                    address: '北京市朝阳区某某创意园'
+                }
+            };
+
+            function loadConfig() {
+                const stored = localStorage.getItem('companyVideoConfig');
+                if (stored) {
+                    try {
+                        const cfg = JSON.parse(stored);
+                        if (!cfg.contact) cfg.contact = { name: '', phone: '', address: '' };
+                        // 确保每个视频都有 video_url_alt 字段
+                        if (cfg.videos) {
+                            cfg.videos.forEach(v => {
+                                if (v.video_url_alt === undefined) v.video_url_alt = '';
+                            });
+                        }
+                        return cfg;
+                    } catch (e) {
+                        return DEFAULT_CONFIG;
+                    }
+                } else {
+                    localStorage.setItem('companyVideoConfig', JSON.stringify(DEFAULT_CONFIG));
+                    return DEFAULT_CONFIG;
+                }
+            }
+
+            const config = loadConfig();
+
+            // DOM 元素
+            const navbarLogo = document.getElementById('navbarLogo');
+            const companyNameEl = document.getElementById('companyName');
+            const mainIntroEl = document.getElementById('mainIntro');
+            const subIntroEl = document.getElementById('subIntro');
+            const videoGrid = document.getElementById('videoGrid');
+            const loadingEl = document.getElementById('loadingIndicator');
+            const modalOverlay = document.getElementById('videoModal');
+            const modalVideoTitle = document.getElementById('modalVideoTitle');
+            const videoPlayerContainer = document.getElementById('videoPlayerContainer');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const contactName = document.getElementById('contactName');
+            const contactPhone = document.getElementById('contactPhone');
+            const contactAddress = document.getElementById('contactAddress');
+
+            // 渲染
+            navbarLogo.src = config.logoUrl || DEFAULT_CONFIG.logoUrl;
+            navbarLogo.alt = 'Logo';
+            companyNameEl.textContent = config.companyName || DEFAULT_CONFIG.companyName;
+            mainIntroEl.textContent = config.mainIntro || '';
+            subIntroEl.textContent = config.subIntro || '';
+            contactName.textContent = config.contact.name || '-';
+            contactPhone.textContent = config.contact.phone || '-';
+            contactAddress.textContent = config.contact.address || '-';
+
+            function renderVideos() {
+                const videos = config.videos || [];
+                if (videos.length === 0) {
+                    videoGrid.innerHTML = '<div class="no-video">暂无视频，请在后台添加 ✨</div>';
+                    loadingEl.style.display = 'none';
+                    return;
+                }
+
+                let htmlStr = '';
+                videos.forEach(v => {
+                    const cover = v.cover_url || '';
+                    htmlStr += `
+                        <div class="video-card" 
+                             data-video-url="${escapeHtml(v.video_url)}" 
+                             data-video-url-alt="${escapeHtml(v.video_url_alt || '')}"
+                             data-title="${escapeHtml(v.title)}">
+                            <div class="cover-container">
+                                <img class="cover-img" src="${escapeHtml(cover)}" alt="${escapeHtml(v.title)}" loading="lazy" onerror="this.style.display='none'">
+                                <div class="play-button"></div>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-title">${escapeHtml(v.title)}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                videoGrid.innerHTML = htmlStr;
+                loadingEl.style.display = 'none';
+
+                document.querySelectorAll('.video-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const videoUrl = card.dataset.videoUrl;
+                        const videoUrlAlt = card.dataset.videoUrlAlt;
+                        const title = card.dataset.title;
+                        openModal(videoUrl, videoUrlAlt, title);
+                    });
+                });
+            }
+
+            function escapeHtml(unsafe) {
+                if (!unsafe) return '';
+                return unsafe.replace(/[&<>"]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    if (m === '"') return '&quot;';
+                    return m;
+                });
+            }
+
+            // 打开模态框，支持双编码
+            function openModal(videoUrl, videoUrlAlt, title) {
+                modalVideoTitle.textContent = title || '正在播放';
+                // 构建多个 source 标签
+                let sources = `<source src="${escapeHtml(videoUrl)}" type="video/mp4">`;
+                if (videoUrlAlt) {
+                    sources += `<source src="${escapeHtml(videoUrlAlt)}" type="video/mp4">`;
+                }
+                videoPlayerContainer.innerHTML = `
+                    <video controls autoplay class="custom-video-player">
+                        ${sources}
+                        您的浏览器不支持HTML5视频播放
+                    </video>
+                `;
+                modalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                modalOverlay.classList.remove('active');
+                videoPlayerContainer.innerHTML = '';
+                document.body.style.overflow = '';
+            }
+
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) closeModal();
+            });
+            closeModalBtn.addEventListener('click', closeModal);
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+
+            renderVideos();
+        })();
+    </script>
+</body>
+</html>
