@@ -9,7 +9,6 @@
     <meta http-equiv='expires' content='0'>
     <meta http-equiv='pragma' content='no-cache'>
     <style>
-        /* 样式保持不变，与上一版相同 */
         * {
             margin: 0;
             padding: 0;
@@ -320,24 +319,6 @@
             font-size: 1.1rem;
             grid-column: 1/-1;
         }
-
-        .admin-badge {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: rgba(0,0,0,0.3);
-            padding: 8px 18px;
-            border-radius: 40px;
-            color: white;
-            font-size: 0.85rem;
-            border: 1px solid rgba(255,255,255,0.2);
-            text-decoration: none;
-            z-index: 200;
-            backdrop-filter: blur(5px);
-        }
-        .admin-badge:hover {
-            background: rgba(0,0,0,0.5);
-        }
     </style>
 </head>
 <body>
@@ -385,12 +366,10 @@
         </div>
     </div>
 
-    <a href="admin.html" class="admin-badge" target="_blank">⚙️ 管理后台</a>
-
     <script>
         (function() {
-            // 默认配置（包含备选视频URL）
-            const DEFAULT_CONFIG = {
+            // 静态配置数据（已移除后台管理，直接在此定义）
+            const CONFIG = {
                 companyName: 'Originally Culture',
                 logoUrl: 'https://wx.qlogo.cn/finderhead/c1KY2icIyIu1ALZfA075awtmkbO9jvDL1xMP9LWIhIZI/0',
                 mainIntro: '归本文化',
@@ -400,13 +379,13 @@
                         cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E4%B8%A4%E4%B8%AA%E6%98%9F%E7%90%83%E5%B0%81%E9%9D%A2.jpg', 
                         title: 'TVC-《两颗星球》热爱篇', 
                         video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E4%B8%A4%E9%A2%97%E6%98%9F%E7%90%83-265-rf30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
-                        video_url_alt: 'https://your-bucket.cos.ap-chengdu.myqcloud.com/video1_h264.mp4'
+                        video_url_alt: ''  // 备选视频，可留空
                     },
                     { 
                         cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E9%BB%84%E6%B2%B9%E5%B0%8F%E7%86%8A%E5%B0%81%E9%9D%A2.jpg', 
                         title: 'TVC-《黄油小熊联名》', 
                         video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E7%88%B1%E7%8E%9Bx%E5%B0%8F%E7%86%8A%E8%81%94%E5%90%8D-265-rf30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
-                        video_url_alt: 'https://your-bucket.cos.ap-chengdu.myqcloud.com/video2_h264.mp4'
+                        video_url_alt: ''
                     },
                     { 
                         cover_url: 'https://via.placeholder.com/320x180?text=封面3', 
@@ -421,30 +400,6 @@
                     address: '天津市 河西区'
                 }
             };
-
-            function loadConfig() {
-                const stored = localStorage.getItem('companyVideoConfig');
-                if (stored) {
-                    try {
-                        const cfg = JSON.parse(stored);
-                        if (!cfg.contact) cfg.contact = { name: '', phone: '', address: '' };
-                        // 确保每个视频都有 video_url_alt 字段
-                        if (cfg.videos) {
-                            cfg.videos.forEach(v => {
-                                if (v.video_url_alt === undefined) v.video_url_alt = '';
-                            });
-                        }
-                        return cfg;
-                    } catch (e) {
-                        return DEFAULT_CONFIG;
-                    }
-                } else {
-                    localStorage.setItem('companyVideoConfig', JSON.stringify(DEFAULT_CONFIG));
-                    return DEFAULT_CONFIG;
-                }
-            }
-
-            const config = loadConfig();
 
             // DOM 元素
             const navbarLogo = document.getElementById('navbarLogo');
@@ -462,17 +417,17 @@
             const contactAddress = document.getElementById('contactAddress');
 
             // 渲染
-            navbarLogo.src = config.logoUrl || DEFAULT_CONFIG.logoUrl;
+            navbarLogo.src = CONFIG.logoUrl;
             navbarLogo.alt = 'Logo';
-            companyNameEl.textContent = config.companyName || DEFAULT_CONFIG.companyName;
-            mainIntroEl.textContent = config.mainIntro || '';
-            subIntroEl.textContent = config.subIntro || '';
-            contactName.textContent = config.contact.name || '-';
-            contactPhone.textContent = config.contact.phone || '-';
-            contactAddress.textContent = config.contact.address || '-';
+            companyNameEl.textContent = CONFIG.companyName;
+            mainIntroEl.textContent = CONFIG.mainIntro;
+            subIntroEl.textContent = CONFIG.subIntro;
+            contactName.textContent = CONFIG.contact.name || '-';
+            contactPhone.textContent = CONFIG.contact.phone || '-';
+            contactAddress.textContent = CONFIG.contact.address || '-';
 
             function renderVideos() {
-                const videos = config.videos || [];
+                const videos = CONFIG.videos;
                 if (videos.length === 0) {
                     videoGrid.innerHTML = '<div class="no-video">暂无视频，请在后台添加 ✨</div>';
                     loadingEl.style.display = 'none';
@@ -522,10 +477,8 @@
                 });
             }
 
-            // 打开模态框，支持双编码
             function openModal(videoUrl, videoUrlAlt, title) {
                 modalVideoTitle.textContent = title || '正在播放';
-                // 构建多个 source 标签
                 let sources = `<source src="${escapeHtml(videoUrl)}" type="video/mp4">`;
                 if (videoUrlAlt) {
                     sources += `<source src="${escapeHtml(videoUrlAlt)}" type="video/mp4">`;
