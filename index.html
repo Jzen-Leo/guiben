@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Portfolio</title>
-    <!-- 强制清除缓存 -->
-    <meta http-equiv='cache-control' content='no-cache, no-store, must-revalidate'>
-    <meta http-equiv='expires' content='0'>
-    <meta http-equiv='pragma' content='no-cache'>
+    <title>视频作品集 · 归本文化</title>
+    <!-- 已移除强制刷新/禁用缓存的meta，让浏览器使用正常缓存策略 -->
+    
+    <!-- 样式表：整体风格为简洁白底毛玻璃效果，适配移动端 -->
     <style>
+        /* 全局重置 & 字体 */
         * {
             margin: 0;
             padding: 0;
@@ -23,9 +23,10 @@
         }
 
         html {
-            scroll-behavior: smooth;
+            scroll-behavior: smooth;  /* 平滑锚点滚动 */
         }
 
+        /* ---------- 导航栏 (毛玻璃效果) ---------- */
         .navbar {
             display: flex;
             align-items: center;
@@ -63,12 +64,14 @@
             color: #3b82f6;
         }
 
+        /* ---------- 通用区块 ---------- */
         .section {
             max-width: 1200px;
             margin: 0 auto;
             padding: 5rem 2rem;
         }
 
+        /* 首页(Home) */
         #home {
             text-align: center;
             padding-top: 3rem;
@@ -105,6 +108,7 @@
             white-space: pre-wrap;
         }
 
+        /* 作品展示区 */
         #works {
             padding-top: 2rem;
         }
@@ -123,6 +127,7 @@
             gap: 2rem;
         }
 
+        /* 视频卡片 */
         .video-card {
             background: white;
             border-radius: 12px;
@@ -154,6 +159,7 @@
             display: block;
         }
 
+        /* 卡片中央的播放按钮 (纯CSS绘制) */
         .play-button {
             position: absolute;
             top: 50%;
@@ -167,7 +173,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            pointer-events: none;
+            pointer-events: none;  /* 让点击穿透到卡片 */
             transition: background-color 0.1s;
         }
 
@@ -201,6 +207,7 @@
             overflow: hidden;
         }
 
+        /* 联系区块 */
         #contact {
             background-color: #ffffff;
             border-top: 1px solid #e2e8f0;
@@ -235,6 +242,7 @@
             margin-right: 1rem;
         }
 
+        /* ---------- 视频播放模态框 (暗色调) ---------- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -323,27 +331,31 @@
 </head>
 <body>
 
+    <!-- ********** 导航栏 (含Logo) ********** -->
     <nav class="navbar">
-        <img class="navbar-logo" id="navbarLogo" src="" alt="Logo">
+        <img class="navbar-logo" id="navbarLogo" src="" alt="归本文化 Logo">
         <div class="nav-links">
-            <a href="#home">Home</a>
+            <a href="#home">首页</a>
             <a href="#works">作品</a>
-            <a href="#contact">联系我们</a>
+            <a href="#contact">联系</a>
         </div>
     </nav>
 
+    <!-- ********** 首页区域：公司名称 + 主副介绍 ********** -->
     <section id="home" class="section">
         <h1 class="company-name" id="companyName">加载中...</h1>
         <p class="main-intro" id="mainIntro"></p>
         <p class="sub-intro" id="subIntro"></p>
     </section>
 
+    <!-- ********** 作品网格区域 (视频卡片动态生成) ********** -->
     <section id="works" class="section">
         <h2 class="section-title">作品展示</h2>
         <div class="video-grid" id="videoGrid"></div>
         <div id="loadingIndicator" class="loading">✨ 加载作品视频...</div>
     </section>
 
+    <!-- ********** 联系信息 ********** -->
     <section id="contact">
         <div class="contact-container">
             <h2 class="contact-title">联系我们</h2>
@@ -355,25 +367,26 @@
         </div>
     </section>
 
-    <!-- 视频播放模态框 -->
+    <!-- ********** 视频播放模态框 (点击卡片弹出) ********** -->
     <div class="modal-overlay" id="videoModal">
         <div class="modal-content">
             <div class="modal-header">
                 <span class="modal-title" id="modalVideoTitle">视频标题</span>
                 <button class="close-btn" id="closeModalBtn">✕</button>
             </div>
-            <div id="videoPlayerContainer"></div>
+            <div id="videoPlayerContainer"></div>   <!-- 动态插入video标签 -->
         </div>
     </div>
 
     <script>
         (function() {
-            // 静态配置数据（已移除后台管理，直接在此定义）
+            // ---------- 静态配置数据 (可直接修改此处更新公司信息、视频列表、联系方式) ----------
             const CONFIG = {
-                companyName: 'Originally Culture',
+                companyName: 'Originally Culture',          // 公司大标题
                 logoUrl: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/icon/%E5%BD%92%E6%9C%ACLOGO.png',
-                mainIntro: '归本文化',
-                subIntro: '用影像链接万物',
+                mainIntro: '归本文化',                       // 主标语
+                subIntro: '用影像链接万物',                   // 副标语
+                // 视频列表：每个对象包含封面、标题、主视频地址、备选地址(可选)
                 videos: [
                      { 
                         cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/BTG.jpg', 
@@ -385,41 +398,41 @@
                         cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E5%A5%87%E8%B6%A3%E5%8F%8C11-%E4%BB%BB%E5%8A%A1.jpg', 
                         title: 'TVC-奇趣双11-任务篇', 
                         video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E4%BB%BB%E5%8A%A1%E7%AF%87-265-RF25%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
-                        video_url_alt: ''  // 备选视频，可留空
+                        video_url_alt: '' 
                     },
                      { 
                         cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E9%A9%AC%E5%B0%94%E6%91%87-2.jpg', 
                         title: 'TVC-奇趣双11-马儿摇', 
                         video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E7%88%B1%E7%8E%9B%E5%8F%8C%E5%8D%81%E4%B8%80%E9%A9%AC%E5%84%BF%E6%91%87-265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
-                        video_url_alt: ''  // 备选视频，可留空
+                        video_url_alt: '' 
                     },
                     { 
                         cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E8%9B%87%E5%B9%B4-%20A7%E6%97%B6%E5%B0%9A%E5%A4%A7%E7%89%87.jpg', 
                         title: 'TVC-蛇年A7时尚大片', 
-                        video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E7%88%B1%E7%8E%9B%E5%8F%8C%E5%8D%81%E4%B8%80%E9%A9%AC%E5%84%BF%E6%91%87-265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
-                        video_url_alt: ''  // 备选视频，可留空
+                        video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E7%88%B1%E7%8E%9B%E5%8F%8C%E5%8D%81%E4%B8%80%E9%A9%AC%E5%84%BF%E6%91%87-265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',  /* 注意：此链接沿用了上一个，可根据实际替换 */
+                        video_url_alt: '' 
                     },
                      { 
                         cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E4%B8%A4%E4%B8%AA%E6%98%9F%E7%90%83.jpg', 
                         title: 'TVC-《两颗星球》热爱篇', 
                         video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E4%B8%A4%E9%A2%97%E6%98%9F%E7%90%83-265-rf30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
-                        video_url_alt: ''  // 备选视频，可留空
+                        video_url_alt: '' 
                     },
                     { 
                         cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E9%BB%84%E6%B2%B9%E5%B0%8F%E7%86%8A-3.jpg', 
                         title: 'TVC-《黄油小熊联名》', 
                         video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E7%88%B1%E7%8E%9Bx%E5%B0%8F%E7%86%8A%E8%81%94%E5%90%8D-265-rf30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
-                        video_url_alt: ''  // 备选视频，可留空
+                        video_url_alt: '' 
                     }
                 ],
                 contact: {
-                    name: '   李先生',
-                    phone: '15620694161',
-                    address: '天津市 河西区'
+                    name: '   李先生',        // 联系人
+                    phone: '15620694161',     // 联系电话
+                    address: '天津市 河西区'   // 地址
                 }
             };
 
-            // DOM 元素
+            // ---------- DOM 元素 ----------
             const navbarLogo = document.getElementById('navbarLogo');
             const companyNameEl = document.getElementById('companyName');
             const mainIntroEl = document.getElementById('mainIntro');
@@ -434,9 +447,9 @@
             const contactPhone = document.getElementById('contactPhone');
             const contactAddress = document.getElementById('contactAddress');
 
-            // 渲染
+            // ---------- 填充公司信息、联系方式 (直接从CONFIG写入) ----------
             navbarLogo.src = CONFIG.logoUrl;
-            navbarLogo.alt = 'Logo';
+            navbarLogo.alt = '归本文化 Logo';
             companyNameEl.textContent = CONFIG.companyName;
             mainIntroEl.textContent = CONFIG.mainIntro;
             subIntroEl.textContent = CONFIG.subIntro;
@@ -444,6 +457,23 @@
             contactPhone.textContent = CONFIG.contact.phone || '-';
             contactAddress.textContent = CONFIG.contact.address || '-';
 
+            /**
+             * 简单的转义HTML特殊字符，防止XSS (虽然数据来源可信，但习惯保留)
+             * @param {string} unsafe - 原始字符串
+             * @returns {string} 转义后的安全字符串
+             */
+            function escapeHtml(unsafe) {
+                if (!unsafe) return '';
+                return unsafe.replace(/[&<>"]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    if (m === '"') return '&quot;';
+                    return m;
+                });
+            }
+
+            // ---------- 渲染视频卡片 (根据CONFIG.videos) ----------
             function renderVideos() {
                 const videos = CONFIG.videos;
                 if (videos.length === 0) {
@@ -455,6 +485,7 @@
                 let htmlStr = '';
                 videos.forEach(v => {
                     const cover = v.cover_url || '';
+                    // 构建卡片HTML，使用data-*属性存储视频地址和标题（已转义）
                     htmlStr += `
                         <div class="video-card" 
                              data-video-url="${escapeHtml(v.video_url)}" 
@@ -472,8 +503,9 @@
                 });
 
                 videoGrid.innerHTML = htmlStr;
-                loadingEl.style.display = 'none';
+                loadingEl.style.display = 'none';   // 隐藏加载提示
 
+                // 为所有卡片绑定点击事件 —— 打开模态框播放视频
                 document.querySelectorAll('.video-card').forEach(card => {
                     card.addEventListener('click', () => {
                         const videoUrl = card.dataset.videoUrl;
@@ -484,19 +516,10 @@
                 });
             }
 
-            function escapeHtml(unsafe) {
-                if (!unsafe) return '';
-                return unsafe.replace(/[&<>"]/g, function(m) {
-                    if (m === '&') return '&amp;';
-                    if (m === '<') return '&lt;';
-                    if (m === '>') return '&gt;';
-                    if (m === '"') return '&quot;';
-                    return m;
-                });
-            }
-
+            // ---------- 打开模态框并加载视频 ----------
             function openModal(videoUrl, videoUrlAlt, title) {
                 modalVideoTitle.textContent = title || '正在播放';
+                // 构造<video>标签的source (主视频 + 备选)
                 let sources = `<source src="${escapeHtml(videoUrl)}" type="video/mp4">`;
                 if (videoUrlAlt) {
                     sources += `<source src="${escapeHtml(videoUrlAlt)}" type="video/mp4">`;
@@ -508,25 +531,30 @@
                     </video>
                 `;
                 modalOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                document.body.style.overflow = 'hidden';   // 禁止背景滚动
             }
 
+            // ---------- 关闭模态框并停止视频 (清空容器) ----------
             function closeModal() {
                 modalOverlay.classList.remove('active');
-                videoPlayerContainer.innerHTML = '';
-                document.body.style.overflow = '';
+                videoPlayerContainer.innerHTML = '';        // 移除视频，停止播放
+                document.body.style.overflow = '';          // 恢复滚动
             }
 
+            // 点击模态背景层关闭
             modalOverlay.addEventListener('click', (e) => {
                 if (e.target === modalOverlay) closeModal();
             });
+            // 点击关闭按钮
             closeModalBtn.addEventListener('click', closeModal);
+            // 按ESC键关闭模态框
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
                     closeModal();
                 }
             });
 
+            // 启动渲染
             renderVideos();
         })();
     </script>
