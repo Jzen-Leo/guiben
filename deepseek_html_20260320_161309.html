@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>归本文化</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #F5F7FA;
+            color: #1E293B;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --brand: #E84C3D;
+            --brand-rgb: 232, 76, 61;
+            --card-bg: #FFFFFF;
+            --border-light: #E2E8F0;
+            --text-muted: #64748B;
+            --text-dark: #0F172A;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        /* 入场动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-title { animation: fadeInUp 2s ease forwards; }
+        .animate-number { animation: fadeInUp 2s ease forwards; opacity: 0; animation-fill-mode: forwards; } /* 基础动画，延迟通过内联覆盖 */
+
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 5%;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-logo { height: 40px; width: auto; object-fit: contain; }
+
+        .nav-links { display: flex; gap: 2.8rem; }
+        .nav-links a { text-decoration: none; color: #1E293B; font-weight: 500; font-size: 1rem; transition: color 0.15s; }
+        .nav-links a:hover { color: var(--brand); }
+
+        /* 通用区块 */
+        .section { max-width: 1280px; margin: 0 auto; padding: 3rem 2rem 2.5rem 2rem; }
+
+        /* 首页 */
+        #home { padding-top: 2.5rem; }
+
+        .company-name {
+            font-size: 3.8rem;
+            font-weight: 650;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            color: var(--text-dark);
+            margin-bottom: 0.8rem;
+            animation: fadeInUp 1.2s ease forwards;
+        }
+
+        .main-intro { font-size: 1.6rem; font-weight: 400; color: #334155; margin-bottom: 0.3rem; animation: fadeInUp 1.2s ease 0.15s forwards; opacity: 0; animation-fill-mode: forwards; }
+        .sub-intro { font-size: 1.1rem; color: var(--text-muted); font-weight: 300; margin-bottom: 1.5rem; animation: fadeInUp 1.2s ease 0.25s forwards; opacity: 0; animation-fill-mode: forwards; }
+
+        /* 数据条 */
+        .stats-row { display: flex; flex-wrap: wrap; gap: 2rem; margin: 1.5rem 0 0.5rem 0; padding-bottom: 1.2rem; border-bottom: 1px solid var(--border-light); }
+        .stat-item { display: flex; align-items: baseline; gap: 0.6rem; }
+        .stat-number { font-size: 2rem; font-weight: 600; color: var(--brand); line-height: 1; }
+        .stat-label { font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* 公司详情 */
+        .company-detail { margin: 0.13rem 0 6rem 0; font-size: 0.95rem; color: #334155; line-height: 1.6; background: transparent; padding: 0; }
+        .company-detail strong { color: var(--brand); font-weight: 600; margin-right: 0.5rem; }
+
+        /* 分类标题 */
+        .category-header { display: flex; align-items: baseline; justify-content: space-between; margin: 2.2rem 0 1.2rem 0; border-bottom: 1px solid var(--border-light); padding-bottom: 0.4rem; }
+        .category-title { font-size: 1.5rem; font-weight: 600; color: var(--text-dark); }
+        .work-count { color: var(--brand); font-size: 0.95rem; background: rgba(var(--brand-rgb), 0.08); padding: 0.2rem 0.9rem; border-radius: 40px; border: 1px solid rgba(var(--brand-rgb), 0.2); }
+
+        /* 视频网格 */
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.8rem; }
+
+        .video-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            transition: transform 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .video-card:hover { transform: translateY(-4px); border-color: var(--brand); box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1); }
+
+        .cover-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #F1F5F9; overflow: hidden; }
+        .cover-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .play-button {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px; height: 44px;
+            background-color: #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            pointer-events: none;
+            transition: background-color 0.15s, transform 0.15s;
+        }
+
+        .play-button::after { content: ''; display: block; width: 0; height: 0; border-style: solid; border-width: 7px 0 7px 12px; border-color: transparent transparent transparent #1E293B; margin-left: 5px; }
+        .video-card:hover .play-button { background-color: #F8FAFC; transform: translate(-50%, -50%) scale(1.05); }
+
+        .card-info { padding: 0.6rem 1rem 0.8rem 1rem; }
+        .card-title { font-weight: 550; font-size: 1rem; line-height: 1.4; color: var(--text-dark); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* 合作品牌 */
+        .brand-section { max-width: 1280px; margin: 0 auto 1.5rem auto; padding: 1.5rem 2rem 2rem 2rem; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
+        .brand-title { font-size: 1.5rem; font-weight: 600; color: var(--text-dark); margin-bottom: 1.2rem; }
+        .brand-image { width: 100%; max-width: 100%; border-radius: 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); transition: transform 0.2s; display: block; }
+        .brand-image:hover { transform: scale(1.005); }
+        .brand-link { display: block; text-decoration: none; }
+
+        /* 联系卡片 */
+        #contact { background-color: #FFFFFF; border-top: 1px solid var(--border-light); padding: 3rem 2rem; }
+        .contact-container { max-width: 1280px; margin: 0 auto; }
+        .contact-title { font-size: 1.5rem; font-weight: 600; color: var(--text-dark); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.6rem; }
+        .contact-grid { display: flex; justify-content: flex-start; }
+        .contact-item { background: #F8FAFC; border: 1px solid var(--border-light); border-radius: 20px; padding: 1.5rem 2rem; max-width: 500px; width: 100%; transition: border 0.2s; }
+        .contact-item:hover { border-color: var(--brand); }
+        .contact-row { display: flex; align-items: baseline; margin-bottom: 0.8rem; }
+        .contact-row:last-child { margin-bottom: 0; }
+        .contact-row strong { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; width: 70px; flex-shrink: 0; }
+        .contact-row span { font-size: 1rem; font-weight: 450; color: var(--text-dark); word-break: break-word; }
+
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease;
+            backdrop-filter: blur(8px);
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content {
+            width: min(90vw, 1200px);
+            background: #FFFFFF;
+            border-radius: 8px;  /* 与视频卡片圆角一致 */
+            overflow: hidden;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.3);
+            transform: scale(0.96);
+            transition: transform 0.2s ease;
+            border: 1px solid var(--border-light);
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 1.2rem; background: #FFFFFF; border-bottom: 1px solid var(--border-light); }
+        .modal-title { font-size: 0.95rem; font-weight: 450; color: var(--text-dark); max-width: 80%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .close-btn { background: #F1F5F9; border: none; width: 30px; height: 30px; border-radius: 30px; font-size: 1.3rem; cursor: pointer; color: #334155; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-light); }
+        .close-btn:hover { background: var(--brand); color: white; border-color: var(--brand); }
+        .custom-video-player { width: 100%; aspect-ratio: 16 / 9; display: block; background: #0F172A; }
+        .loading, .no-video { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 1rem; grid-column: 1/-1; border: 1px dashed var(--border-light); border-radius: 40px; }
+
+        /* 移动端 */
+        @media (max-width: 700px) {
+            .navbar { padding: 0.8rem 5%; }
+            .nav-links { gap: 1.2rem; }
+            .nav-links a { font-size: 0.9rem; }
+            .company-name { font-size: 2.8rem; }
+            .main-intro { font-size: 1.3rem; }
+            .stats-row { gap: 1.2rem; }
+            .stat-number { font-size: 1.6rem; }
+            .category-title { font-size: 1.3rem; }
+            .section, .brand-section, #contact { padding-left: 1.2rem; padding-right: 1.2rem; }
+            .contact-row strong { width: 60px; }
+            .contact-row span { font-size: 0.95rem; }
+            .brand-image { border-radius: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航 -->
+    <nav class="navbar">
+        <img class="navbar-logo" id="navbarLogo" src="" alt="归本文化 Logo">
+        <div class="nav-links">
+            <a href="#home">首页</a>
+            <a href="#works">作品</a>
+            <a href="#brand">合作</a>
+            <a href="#contact">联系</a>
+        </div>
+    </nav>
+
+    <!-- 首页区域 -->
+    <section id="home" class="section">
+        <h1 class="company-name" id="companyName">加载中...</h1>
+        <p class="main-intro" id="mainIntro"></p>
+        <p class="sub-intro" id="subIntro"></p>
+        <div class="stats-row" id="statsRow"></div>
+    </section>
+
+    <!-- 作品区域 -->
+    <section id="works" class="section">
+        <div class="company-detail" id="companyDetail"></div>
+
+        <!-- 分类：产品TVC -->
+        <div class="category-header">
+            <h3 class="category-title">产品TVC</h3>
+            <span class="work-count" id="productCount">0</span>
+        </div>
+        <div class="video-grid" id="productGrid"></div>
+
+        <!-- 分类：创意TVC -->
+        <div class="category-header">
+            <h3 class="category-title">创意TVC</h3>
+            <span class="work-count" id="tvcCount">0</span>
+        </div>
+        <div class="video-grid" id="tvcGrid"></div>
+
+        <!-- 分类：剧情片 -->
+        <div class="category-header">
+            <h3 class="category-title">剧情片</h3>
+            <span class="work-count" id="storyCount">0</span>
+        </div>
+        <div class="video-grid" id="storyGrid"></div>
+    </section>
+
+    <!-- 合作品牌 -->
+    <section id="brand" class="brand-section">
+        <h2 class="brand-title">合作品牌</h2>
+        <a href="#" class="brand-link" id="brandLink" target="_blank">
+            <img class="brand-image" id="brandImage" src="" alt="合作品牌" loading="lazy">
+        </a>
+    </section>
+
+    <!-- 联系卡片 -->
+    <section id="contact">
+        <div class="contact-container">
+            <h2 class="contact-title">联系我们</h2>
+            <div class="contact-grid" id="contactGrid"></div>
+        </div>
+    </section>
+
+    <!-- 视频模态框 -->
+    <div class="modal-overlay" id="videoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="modalVideoTitle">视频标题</span>
+                <button class="close-btn" id="closeModalBtn">✕</button>
+            </div>
+            <div id="videoPlayerContainer"></div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        /* ============================================================
+           网站基础配置 - 修改此处即可更新网站内容
+           ============================================================ */
+
+        // 网站基本信息
+        const SITE_CONFIG = {
+            companyName: 'Originally Culture',           // 页面标题（英文）
+            logoUrl: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/icon/%E5%BD%92%E6%9C%ACLOGO.png',  // Logo图片链接
+            mainIntro: '归本文化',                        // 主标题
+            subIntro: '用影像链接万物',                   // 副标题
+            // 公司简介
+            companyDetail: '归本文化创立于2016年，专注优质影像创作，服务众多一线品牌。公司聚焦TVC广告与品牌宣传，同时深耕自媒体创作，打造了众多破圈优质内容。我们以视觉叙事传递品牌精神，用影像链接万物。'
+        };
+
+        // 数据统计
+        const STATS = [
+            { number: '300+', label: '影像作品' },
+            { number: '20+', label: '合作品牌' },
+            { number: '2016', label: 'since TianJin' }
+        ];
+
+        // 合作品牌配置
+        const BRAND_CONFIG = {
+            imageUrl: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/icon/%E5%90%88%E9%9B%86.png',  // 品牌图片链接
+            link: 'https://www.example.com'    // 点击跳转链接
+        };
+
+        // 联系信息
+        const CONTACT_INFO = {
+            name: '李先生',
+            phone: '15620694161',
+            address: '天津市 河西区'
+        };
+
+        /* ============================================================
+           视频数据配置 - 按分类添加视频
+           视频分类：product（产品TVC）、tvc（创意TVC）、story（剧情片）
+           ============================================================ */
+
+        const VIDEOS = [
+            // ========== 产品TVC ==========
+            {
+                title: 'BTG-Unlock 产品宣传片',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/BTG.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/BTG-4k-265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'product'
+            },
+            {
+                title: 'DMK - EYETONE FOR LAUGHING',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2-2/DMK%E9%9D%A2%E9%9C%9C-2.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E5%BE%AE%E7%AC%91%E9%9D%A2%E9%9C%9C265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'product'
+            },
+            {
+                title: 'DMK - MELANOTECH DROPS',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2-2/DMK%E4%BA%AE%E8%82%A4.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E4%BA%AE%E8%82%A4%E6%BB%B4%E6%B6%B2265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'product'
+            },
+            {
+                title: '明基 - X3000投影仪',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2-2/%E6%98%8E%E5%9F%BA-x3000-3.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/X3000-265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'product'
+            },
+            {
+                title: '九安 - 电子血压计',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2-2/%E4%B9%9D%E5%AE%89-%E7%94%B5%E5%AD%90%E8%A1%80%E5%8E%8B%E8%AE%A13.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E4%B9%9D%E5%AE%89%E5%B9%BF%E5%91%8A%EF%BD%9C265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91-4.mp4',
+                category: 'product'
+            },
+
+            // ========== 创意TVC ==========
+            {
+                title: 'TVC-奇趣双11-马儿摇',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E9%A9%AC%E5%B0%94%E6%91%87-2.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E7%88%B1%E7%8E%9B%E5%8F%8C%E5%8D%81%E4%B8%80%E9%A9%AC%E5%84%BF%E6%91%87-265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'tvc'
+            },
+            {
+                title: 'TVC-蛇年A7时尚大片',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E8%9B%87%E5%B9%B4-%20A7%E6%97%B6%E5%B0%9A%E5%A4%A7%E7%89%87.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E7%88%B1%E7%8E%9B-A7%20%E6%98%A5%E8%8A%82-265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'tvc'
+            },
+            {
+                title: 'TVC-《黄油小熊联名》',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E9%BB%84%E6%B2%B9%E5%B0%8F%E7%86%8A-3.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E7%88%B1%E7%8E%9Bx%E5%B0%8F%E7%86%8A%E8%81%94%E5%90%8D-265-rf30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'tvc'
+            },
+            {
+                title: 'AIMA - 芭比',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2-2/%E7%88%B1%E7%8E%9B-%E8%8A%AD%E6%AF%94.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E7%88%B1%E7%8E%9B%E8%8A%AD%E6%AF%94-265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'tvc'
+            },
+            {
+                title: 'AIMA - 有钱花',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2-2/%E7%88%B1%E7%8E%9B-%E6%9C%89%E9%92%B1%E8%8A%B1.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E7%88%B1%E7%8E%9B%C2%B7%E6%9C%89%E9%92%B1%E8%8A%B1--265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'tvc'
+            },
+            {
+                title: 'AIMA - 音乐节',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2-2/%E7%88%B1%E7%8E%9B-%E9%9F%B3%E4%B9%90%E8%8A%82-3.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E9%9F%B3%E4%B9%90%E8%8A%82--265-RF30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'tvc'
+            },
+
+            // ========== 剧情片 ==========
+            {
+                title: 'TVC-奇趣双11-任务篇',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E5%A5%87%E8%B6%A3%E5%8F%8C11-%E4%BB%BB%E5%8A%A1.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E4%BB%BB%E5%8A%A1%E7%AF%87-265-RF25%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'story'
+            },
+            {
+                title: 'TVC-《两颗星球》热爱篇',
+                cover_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E5%B0%81%E9%9D%A2/%E4%B8%A4%E4%B8%AA%E6%98%9F%E7%90%83.jpg',
+                video_url: 'https://guiben-1302581746.cos.ap-chongqing.myqcloud.com/%E4%BD%9C%E5%93%81%E5%8E%8B%E7%BC%A9/%E4%B8%A4%E9%A2%97%E6%98%9F%E7%90%83-265-rf30%E3%80%90%E5%8E%8B%E7%BC%A9%E3%80%91.mp4',
+                category: 'story'
+            }
+        ];
+
+        /* ============================================================
+           渲染逻辑 - 无需修改
+           ============================================================ */
+
+        // DOM 元素
+        const dom = {
+            navbarLogo: document.getElementById('navbarLogo'),
+            companyName: document.getElementById('companyName'),
+            mainIntro: document.getElementById('mainIntro'),
+            subIntro: document.getElementById('subIntro'),
+            statsRow: document.getElementById('statsRow'),
+            companyDetail: document.getElementById('companyDetail'),
+            productGrid: document.getElementById('productGrid'),
+            tvcGrid: document.getElementById('tvcGrid'),
+            storyGrid: document.getElementById('storyGrid'),
+            productCount: document.getElementById('productCount'),
+            tvcCount: document.getElementById('tvcCount'),
+            storyCount: document.getElementById('storyCount'),
+            brandImage: document.getElementById('brandImage'),
+            brandLink: document.getElementById('brandLink'),
+            contactGrid: document.getElementById('contactGrid'),
+            videoModal: document.getElementById('videoModal'),
+            modalVideoTitle: document.getElementById('modalVideoTitle'),
+            videoPlayerContainer: document.getElementById('videoPlayerContainer'),
+            closeModalBtn: document.getElementById('closeModalBtn')
+        };
+
+        // HTML转义
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        }
+
+        // 初始化基础信息
+        function initBasicInfo() {
+            dom.navbarLogo.src = SITE_CONFIG.logoUrl;
+            dom.navbarLogo.alt = '归本文化';
+            dom.companyName.textContent = SITE_CONFIG.companyName;
+            dom.mainIntro.textContent = SITE_CONFIG.mainIntro;
+            dom.subIntro.textContent = SITE_CONFIG.subIntro;
+            dom.companyDetail.innerHTML = `<strong>Originally Culture</strong> ${SITE_CONFIG.companyDetail}`;
+        }
+
+        // 渲染统计 (修改点：每个数字错开0.5秒)
+        function renderStats() {
+            dom.statsRow.innerHTML = STATS.map((s, index) => `
+                <div class="stat-item">
+                    <span class="stat-number animate-number" style="animation-delay: ${index * 0.5}s;">${s.number}</span>
+                    <span class="stat-label">${s.label}</span>
+                </div>
+            `).join('');
+        }
+
+        // 渲染合作品牌
+        function renderBrand() {
+            if (BRAND_CONFIG.imageUrl) {
+                dom.brandImage.src = BRAND_CONFIG.imageUrl;
+                dom.brandImage.alt = '合作品牌';
+                dom.brandLink.href = BRAND_CONFIG.link || '#';
+            }
+        }
+
+        // 渲染联系信息
+        function renderContact() {
+            dom.contactGrid.innerHTML = `
+                <div class="contact-item">
+                    <div class="contact-row"><strong>联系人</strong><span>${CONTACT_INFO.name}</span></div>
+                    <div class="contact-row"><strong>电话</strong><span>${CONTACT_INFO.phone}</span></div>
+                    <div class="contact-row"><strong>地址</strong><span>${CONTACT_INFO.address}</span></div>
+                </div>
+            `;
+        }
+
+        // 渲染视频卡片
+        function renderVideoCard(video) {
+            return `
+                <div class="video-card" data-video-url="${escapeHtml(video.video_url)}" data-title="${escapeHtml(video.title)}">
+                    <div class="cover-container">
+                        <img class="cover-img" src="${escapeHtml(video.cover_url)}" alt="${escapeHtml(video.title)}" loading="lazy" onerror="this.style.display='none'">
+                        <div class="play-button"></div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-title">${escapeHtml(video.title)}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 按分类渲染视频
+        function renderVideos() {
+            const grids = { product: [], tvc: [], story: [] };
+            const counts = { product: 0, tvc: 0, story: 0 };
+
+            VIDEOS.forEach(v => {
+                if (grids[v.category]) {
+                    grids[v.category].push(renderVideoCard(v));
+                    counts[v.category]++;
+                }
+            });
+
+            dom.productGrid.innerHTML = grids.product.join('');
+            dom.tvcGrid.innerHTML = grids.tvc.join('');
+            dom.storyGrid.innerHTML = grids.story.join('');
+            dom.productCount.textContent = counts.product;
+            dom.tvcCount.textContent = counts.tvc;
+            dom.storyCount.textContent = counts.story;
+
+            // 绑定点击事件
+            document.querySelectorAll('.video-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const videoUrl = card.dataset.videoUrl;
+                    const title = card.dataset.title;
+                    openModal(videoUrl, title);
+                });
+            });
+        }
+
+        // 模态框
+        function openModal(videoUrl, title) {
+            dom.modalVideoTitle.textContent = title || '归本作品';
+            dom.videoPlayerContainer.innerHTML = `
+                <video controls autoplay class="custom-video-player">
+                    <source src="${escapeHtml(videoUrl)}" type="video/mp4">
+                    您的浏览器不支持HTML5视频播放
+                </video>
+            `;
+            dom.videoModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            dom.videoModal.classList.remove('active');
+            dom.videoPlayerContainer.innerHTML = '';
+            document.body.style.overflow = '';
+        }
+
+        // 事件绑定
+        dom.videoModal.addEventListener('click', e => { if (e.target === dom.videoModal) closeModal(); });
+        dom.closeModalBtn.addEventListener('click', closeModal);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && dom.videoModal.classList.contains('active')) closeModal(); });
+
+        // 初始化
+        initBasicInfo();
+        renderStats();
+        renderBrand();
+        renderContact();
+        renderVideos();
+
+    })();
+    </script>
+
+    <!-- 所有无关内容已移除 -->
+</body>
+</html>
